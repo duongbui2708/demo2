@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.baitaplon.Adapter.UserAdapter;
 import com.example.baitaplon.Model.Chat;
+import com.example.baitaplon.Model.Chatlist;
 import com.example.baitaplon.Model.User;
 import com.example.baitaplon.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +35,7 @@ public class ChatsFragment extends Fragment {
 
     FirebaseUser fuser;
     DatabaseReference reference;
-    private List<String> userslist ;
+    private List<Chatlist> userslist ;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -46,25 +47,18 @@ public class ChatsFragment extends Fragment {
 
         userslist= new ArrayList<>();
 
-        reference= FirebaseDatabase.getInstance().getReference("chats");
-        //System.out.println("***"  +reference);
+        reference = FirebaseDatabase.getInstance().getReference("Chatlist").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {// hiển thị danh sách user có liên lạc với mình
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userslist.clear();
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    Chat chat= snapshot.getValue(Chat.class);
-                    if(chat.getSender().equals(fuser.getUid())){
-                        userslist.add(chat.getReceiver());
-                    }
-                    if(chat.getReceiver().equals(fuser.getUid())){
-                        userslist.add(chat.getSender());
-                    }
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Chatlist chatList = snapshot.getValue(Chatlist.class);
+                    userslist.add(chatList);
                 }
-               // System.out.println("****"+userslist.size());
-                readChats();
-            }
 
+                chatList();
+            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -73,32 +67,24 @@ public class ChatsFragment extends Fragment {
 
         return view;
     }
-    private void readChats(){
-        mUsers= new ArrayList<>();
-        reference= FirebaseDatabase.getInstance().getReference("Users");
+
+    private void chatList() {
+        mUsers = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    User user= snapshot.getValue(User.class);
-                    //display 1 user from chat
-                    for(String id: userslist){
-                        if(user.getId().equals(id)){
-                            if(mUsers.size() !=0){
-                                if(issole(mUsers,user)){
-                                    mUsers.add(user);
-                                }
-                            }else{
-                                mUsers.add(user);
-                            }
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+                    for (Chatlist chatList : userslist) {
+                        if (user != null && user.getId().equals(chatList.getId())) {
+                            mUsers.add(user);
                         }
                     }
-
-                    userAdapter= new UserAdapter(getContext(),mUsers,true);
-                    recyclerView.setAdapter(userAdapter);
                 }
-
+                userAdapter = new UserAdapter(getContext(), mUsers, true);
+                recyclerView.setAdapter(userAdapter);
             }
 
             @Override
@@ -107,6 +93,8 @@ public class ChatsFragment extends Fragment {
             }
         });
     }
+
+
     private boolean issole(List<User> list, User user){
         for(User user1: list){
             if(user1.getId().equals(user.getId())){

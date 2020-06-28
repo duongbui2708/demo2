@@ -49,6 +49,8 @@ public class MessageActivity extends AppCompatActivity {
     List<Chat> mChat;
     RecyclerView recyclerView;
 
+    ValueEventListener seenListener;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,15 +119,58 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        seenMessage(userid);
     }
 
-    private void sendMessage(String sender, String receiver, String message){//gửi message từ người gửi cho người nhận
+    private void seenMessage(final String userId) {
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        seenListener = reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if (chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userId)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("isseen", true);
+                        snapshot.getRef().updateChildren(hashMap);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void sendMessage(String sender, final String receiver, String message){//gửi message từ người gửi cho người nhận
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference();
         HashMap<String,Object> hashMap= new HashMap<>();
         hashMap.put("sender",sender);
         hashMap.put("receiver",receiver);
         hashMap.put("message",message);
+        hashMap.put("isseen",false);
         reference.child("chats").push().setValue(hashMap);
+
+        //add user to chat fragment
+        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
+                .child(fuser.getUid())
+                .child(receiver);
+
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    chatRef.child("id").setValue(receiver);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
     private void readMessage (final String myid, final String userid, final String imageurl ){
         mChat= new ArrayList<>();
@@ -171,6 +216,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        reference.removeEventListener(seenListener);
         status("offline");
     }
 }
