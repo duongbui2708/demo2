@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "355729693312-clis0r1q394ts64u1afa42qt6ur7tra9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.baitaplon",
+            "certificate_hash": "0f38bb8e41d20da2aef28efd90093e8d0c746481"
+          }
+        },
+        {
           "client_id": "355729693312-v3n7fd0hn2vcndrp8dfh4g99gq0lii2d.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
