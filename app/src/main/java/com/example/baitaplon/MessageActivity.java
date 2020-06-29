@@ -123,7 +123,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void seenMessage(final String userId) {
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference = FirebaseDatabase.getInstance().getReference("chats");
         seenListener = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

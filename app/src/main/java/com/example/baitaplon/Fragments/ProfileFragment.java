@@ -82,8 +82,8 @@ public class ProfileFragment extends Fragment {
                 }
                 else
                 {
+//                    System.out.println(user.getImageURL());
                     Glide.with(getContext()).load(user.getImageURL()).into(image_profile);
-
                 }
             }
 
