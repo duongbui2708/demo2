@@ -70,6 +70,7 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textStyle="bold"
                 android:gravity="end"
+                android:id="@+id/tvRegister"
                 >
 
             </TextView>

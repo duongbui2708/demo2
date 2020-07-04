@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     DatabaseReference reference;
     TextView forgot_password;
     String buttonText;
-    TextView btn_register;
+    TextView tvRegister;
     private LoginButton login_button;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 123;
@@ -75,17 +75,11 @@ public class LoginActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         btnLogin = findViewById(R.id.btnLogin);
-        btn_register = findViewById(R.id.btn_register);
+        tvRegister = findViewById(R.id.tvRegister);
         forgot_password= findViewById(R.id.forgot_password);
         setGooglePlusButtonText(signInButton,buttonText);
         mAuth = FirebaseAuth.getInstance();
 
-        btn_register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
-            }
-        });
 
         //Config Facebook
 //        FacebookSdk.sdkInitialize(getApplicationContext());
@@ -124,6 +118,15 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        tvRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
+            }
+        });
+
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

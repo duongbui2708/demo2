@@ -58,16 +58,19 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
-        if(firebaseUser != null)
-        {
-            HashMap<String,String> hashMap = new HashMap<>();
-            hashMap.put("id",firebaseUser.getUid());
-            hashMap.put("username",firebaseUser.getDisplayName());
-            hashMap.put("imageURL",firebaseUser.getPhotoUrl().toString());
-            hashMap.put("status","online");
-            hashMap.put("search", firebaseUser.getDisplayName().toLowerCase());
-            reference.setValue(hashMap);
-        }
+
+//        Uri img = firebaseUser.getPhotoUrl();
+//        System.out.println(img);
+//        if(firebaseUser != null && !firebaseUser.getPhotoUrl().equals("default"))
+//        {
+//            HashMap<String,String> hashMap = new HashMap<>();
+//            hashMap.put("id",firebaseUser.getUid());
+//            hashMap.put("username",firebaseUser.getDisplayName());
+//            hashMap.put("imageURL",firebaseUser.getPhotoUrl().toString());
+//            hashMap.put("status","online");
+//            hashMap.put("search", firebaseUser.getDisplayName().toLowerCase());
+//            reference.setValue(hashMap);
+//        }
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
