@@ -91,6 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
                         hashMap.put("status","offline");
                         hashMap.put("search", username.toLowerCase());
 
+                        //create user to database
                         reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

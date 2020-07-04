@@ -3,6 +3,7 @@ package com.example.baitaplon.Fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,6 +42,8 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 
 public class ProfileFragment extends Fragment {
 
@@ -54,7 +57,7 @@ public class ProfileFragment extends Fragment {
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
     private StorageTask uploadTask;
-
+    public static Context context;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,7 +66,7 @@ public class ProfileFragment extends Fragment {
 
         image_profile = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
-
+        context = getApplicationContext();
         //Represents a reference to a Google Cloud Storage object.
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
@@ -83,7 +86,7 @@ public class ProfileFragment extends Fragment {
                 else
                 {
 //                    System.out.println(user.getImageURL());
-                    Glide.with(getContext()).load(user.getImageURL()).into(image_profile);
+                    Glide.with(ProfileFragment.context).load(user.getImageURL()).into(image_profile);
                 }
             }
 

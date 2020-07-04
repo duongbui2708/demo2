@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,9 @@ import com.example.baitaplon.Fragments.ChatsFragment;
 import com.example.baitaplon.Fragments.ProfileFragment;
 import com.example.baitaplon.Fragments.UsersFragment;
 import com.example.baitaplon.Model.User;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,9 +56,18 @@ public class MainActivity extends AppCompatActivity {
 
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
-
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        if(firebaseUser != null)
+        {
+            HashMap<String,String> hashMap = new HashMap<>();
+            hashMap.put("id",firebaseUser.getUid());
+            hashMap.put("username",firebaseUser.getDisplayName());
+            hashMap.put("imageURL",firebaseUser.getPhotoUrl().toString());
+            hashMap.put("status","online");
+            hashMap.put("search", firebaseUser.getDisplayName().toLowerCase());
+            reference.setValue(hashMap);
+        }
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -102,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         {
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
                 startActivity(new Intent(MainActivity.this,StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return true;
         }
@@ -144,11 +158,15 @@ public class MainActivity extends AppCompatActivity {
     private void status(String status)
     {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+//        String mDatabase = FirebaseDatabase.getInstance().getReference();
+//        String uid = firebaseUser.getUid();
+//        if()
+//        {
+            HashMap<String,Object> hashMap = new HashMap<>();
+            hashMap.put("status",status);
 
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("status",status);
-
-        reference.updateChildren(hashMap);
+            reference.updateChildren(hashMap);
+//        }
     }
 
     @Override
@@ -161,5 +179,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         status("offline");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+//        if(account !=null)
+//        {
+//            Uri image = account.getPhotoUrl();
+//            String name = account.getDisplayName();
+////            System.out.println(image);
+////            System.out.println(name);
+////            username.setText(user.getUsername());
+//        }
     }
 }
